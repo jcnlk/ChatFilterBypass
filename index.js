@@ -12,11 +12,10 @@ function applyBypassMethod(message) {
     case 0: // Font
       return message.replace(/./g, (char) => {
         const code = char.charCodeAt(0);
-        return code >= 33 && code <= 126
-          ? String.fromCharCode(0xff00 + code - 0x20)
-          : char === " "
-          ? "　"
-          : char;
+        if (code >= 33 && code <= 126) {
+          return String.fromCharCode(0xff00 + code - 0x20);
+        } if (char === " ") return " ";
+        else return char;
       });
     case 1: // Add spaces
       return message.split("").join(" ");
@@ -31,26 +30,24 @@ function applyBypassMethod(message) {
   }
 }
 
-registerWhen(register("messageSent", (fullMessage, event) => {
-  if (!fullMessage.startsWith("/")) return;
+registerWhen(register("messageSent", (fullMsg, event) => {
+  const msg = fullMsg.toLowerCase();
+  if (!msg.startsWith("/")) return;
   const currentTime = Date.now();
   let command = null;
   let recipient = null;
 
-  if (fullMessage.startsWith("/pc ") || fullMessage.startsWith("/party chat ")) command = "/pc";
-  if (fullMessage.startsWith("/ac ") || fullMessage.startsWith("/achat ")) command = "/ac";
-  if (fullMessage.startsWith("/gc ") || fullMessage.startsWith("/guild chat ")) command = "/gc";
-  if (fullMessage.startsWith("/cc ") || fullMessage.startsWith("/coopchat ")) command = "/cc"
-  if (fullMessage.match(/^\/(w|whisper|msg|message|tell) \w+ /)) {
-    const parts = fullMessage.split(" ");
+  if (msg.startsWith("/pc ") || msg.startsWith("/party chat ")) command = "/pc";
+  if (msg.startsWith("/ac ") || msg.startsWith("/achat ")) command = "/ac";
+  if (msg.startsWith("/gc ") || msg.startsWith("/guild chat ")) command = "/gc";
+  if (msg.startsWith("/cc ") || msg.startsWith("/coopchat ")) command = "/cc"
+  if (msg.match(/^\/(w|whisper|msg|message|tell) \w+ /)) {
+    const parts = fullMsg.split(" ");
 
     command = parts[0].startsWith("/w")
-      ? "/w"
-      : parts[0].startsWith("/whisper")
-      ? "/whisper"
-      : parts[0].startsWith("/msg")
-      ? "/msg"
-      : "/message";
+      ? "/w" : parts[0].startsWith("/whisper")
+      ? "/whisper" : parts[0].startsWith("/msg")
+      ? "/msg" : "/message";
 
     recipient = parts[1];
   }
@@ -64,24 +61,23 @@ registerWhen(register("messageSent", (fullMessage, event) => {
 }), () => config.toggle);
 
 registerWhen(register("chat", (message, event) => {
-    cancel(event);
+  cancel(event);
 
-    ChatLib.chat("&c[ChatFilterBypass] &fBypassing blocked message...");
+  ChatLib.chat("&c[ChatFilterBypass] &fBypassing blocked message...");
 
-    const bypassedMessage = applyBypassMethod(message);
-    const currentTime = Date.now();
-    const isRecentMessage = currentTime - lastMessageInfo.timestamp < 1000;
+  const bypassedMessage = applyBypassMethod(message);
+  const currentTime = Date.now();
+  const isRecentMessage = currentTime - lastMessageInfo.timestamp < 1000;
 
-    if (lastMessageInfo.command && isRecentMessage) {
-      if (lastMessageInfo.command === "/w" || lastMessageInfo.command === "/whisper" ||
-        lastMessageInfo.command === "/msg" || lastMessageInfo.command === "/message") {
-        if (lastMessageInfo.recipient) {
-          const cmdWithoutSlash = lastMessageInfo.command.substring(1);
-          setTimeout(() => ChatLib.command(`${cmdWithoutSlash} ${lastMessageInfo.recipient} ${bypassedMessage}`), 500);
-        }
+  if (lastMessageInfo.command && isRecentMessage) {
+    if (lastMessageInfo.command === "/w" || lastMessageInfo.command === "/whisper" ||
+      lastMessageInfo.command === "/msg" || lastMessageInfo.command === "/message") {
+      if (lastMessageInfo.recipient) {
+        const cmdWithoutSlash = lastMessageInfo.command.substring(1);
+        setTimeout(() => ChatLib.command(`${cmdWithoutSlash} ${lastMessageInfo.recipient} ${bypassedMessage}`), 500);
       }
-      else ChatLib.command(lastMessageInfo.command.substring(1) + ` ${bypassedMessage}`);
-    } else ChatLib.say(bypassedMessage);
-  }).setCriteria('We blocked your comment "${message}" because it ${*}. https://www.hypixel.net/rules/'), () => config.toggle);
+    } else setTimeout(() => ChatLib.command(lastMessageInfo.command.substring(1) + ` ${bypassedMessage}`), 100);
+  } else setTimeout(() => ChatLib.say(bypassedMessage), 100);
+}).setCriteria('We blocked your comment "${message}" because it ${*}. https://www.hypixel.net/rules/'), () => config.toggle);
 
 register("command", () => config.openGUI()).setName("chatfilterbypass").setAliases(["cfb", "bypass"]);
