@@ -38,9 +38,10 @@ registerWhen(register("messageSent", (fullMessage, event) => {
   let recipient = null;
 
   if (fullMessage.startsWith("/pc ") || fullMessage.startsWith("/party chat ")) command = "/pc";
-  if (fullMessage.startsWith("/ac ") || fullMessage.startsWith("/all chat ")) command = "/ac";
+  if (fullMessage.startsWith("/ac ") || fullMessage.startsWith("/achat ")) command = "/ac";
   if (fullMessage.startsWith("/gc ") || fullMessage.startsWith("/guild chat ")) command = "/gc";
-  if (fullMessage.match(/^\/(w|whisper|msg|message) \w+ /)) {
+  if (fullMessage.startsWith("/cc ") || fullMessage.startsWith("/coopchat ")) command = "/cc"
+  if (fullMessage.match(/^\/(w|whisper|msg|message|tell) \w+ /)) {
     const parts = fullMessage.split(" ");
 
     command = parts[0].startsWith("/w")
