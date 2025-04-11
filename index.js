@@ -1,10 +1,10 @@
 import config from "./config";
 
 register("chat", (message, event) => {
-    if (!config.toggled && !config.toggled2 && !config.toggled3 && !config.toggled4 && !config.toggled5) return;
+    if (!config.toggled) return;
     cancel(event);
 
-    if (config.toggled) {
+    if (config.bypassMethod === 0) {
         const fullwidthMessage = message.replace(/./g, char => {
             const code = char.charCodeAt(0);
             return (code >= 33 && code <= 126)
@@ -14,25 +14,10 @@ register("chat", (message, event) => {
         ChatLib.say(fullwidthMessage);
     }
 
-    if (config.toggled2) {
-        const spacedMessage = message.split('').join(' ');
-        ChatLib.say(spacedMessage);
-    }
-
-    if (config.toggled3) {
-        const dottedMessage = message.split('').join('.');
-        ChatLib.say(dottedMessage);
-    }
-
-    if (config.toggled4) {
-        const sigmaMessage = message.split('').join('*');
-        ChatLib.say(sigmaMessage);
-    }
-
-    if (config.toggled5) {
-        const dashedMessage = message.split('').join('-');
-        ChatLib.say(dashedMessage);
-    }
+    if (config.bypassMethod === 1) ChatLib.say(message.split('').join(' '));
+    if (config.bypassMethod === 2) ChatLib.say(message.split('').join('.'));
+    if (config.bypassMethod === 3) ChatLib.say(message.split('').join('*'));
+    if (config.bypassMethod === 4) ChatLib.say(message.split('').join('-'));
 }).setCriteria("We blocked your comment \"${message}\" because it ${*}. https://www.hypixel.net/rules/");
 
 register("command", () => config.openGUI()).setName("chatfilterbypass").setAliases(["cfb", "bypass"]);

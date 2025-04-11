@@ -1,45 +1,26 @@
-import { @Vigilant, @SwitchProperty } from "Vigilance";
+import { @Vigilant, @SwitchProperty, @SelectorProperty } from "Vigilance";
 
 @Vigilant("ChatFilterBypass", "ChatFilterBypass")
 
 class Config {
   @SwitchProperty({
-    name: "font bypass",
-    description: "different font for messages",
+    name: "Toggle",
+    description: "Turn this module §aon§r or §coff§r.",
     category: "General"
   })
-  toggled = true;
+  toggle = true;
 
-  @SwitchProperty({
-    name: "space bypass",
-    description: "add a space between every message",
-    category: "General"
+  @SelectorProperty({
+    name: "Bypass Method",
+    description: "Use this method to bypass:",
+    category: "General",
+    options: ["Font", "Add spaces", "Add .", "Add *", "Add -"]
   })
-  toggled2 = true;
-
-  @SwitchProperty({
-    name: ". bypass",
-    description: "use . between every letter",
-    category: "General"
-  })
-  toggled3 = true;
-
-  @SwitchProperty({
-    name: "* bypass",
-    description: "use * between every letter",
-    category: "General"
-  })
-  toggled4 = true;
-
-  @SwitchProperty({
-    name: "- bypass",
-    description: "use - between every letter",
-    category: "General"
-  })
-  toggled5 = true;
+  bypassMethod = 0;
 
   constructor() {
     this.initialize(this);
+    this.addDependency("Bypass Method", "Toggle");
   }
 }
 export default new Config();
