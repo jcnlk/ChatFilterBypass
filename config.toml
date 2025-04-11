@@ -1,0 +1,15 @@
+
+[general]
+	space_bypass = false
+	"*_bypass" = false
+	toggle2 = false
+	toggle3 = false
+	font_bypass = false
+	-_bypass = false
+	toggle4 = false
+	toggle5 = false
+	toggle = false
+
+	[general.]
+		_bypass = false
+
