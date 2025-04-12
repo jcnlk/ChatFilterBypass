@@ -74,10 +74,10 @@ registerWhen(register("chat", (message, event) => {
       lastMessageInfo.command === "/msg" || lastMessageInfo.command === "/message") {
       if (lastMessageInfo.recipient) {
         const cmdWithoutSlash = lastMessageInfo.command.substring(1);
-        setTimeout(() => ChatLib.command(`${cmdWithoutSlash} ${lastMessageInfo.recipient} ${bypassedMessage}`), 500);
+        setTimeout(() => ChatLib.command(`${cmdWithoutSlash} ${lastMessageInfo.recipient} ${bypassedMessage}`), 750);
       }
-    } else setTimeout(() => ChatLib.command(lastMessageInfo.command.substring(1) + ` ${bypassedMessage}`), 100);
-  } else setTimeout(() => ChatLib.say(bypassedMessage), 100);
+    } else setTimeout(() => ChatLib.command(lastMessageInfo.command.substring(1) + ` ${bypassedMessage}`), 250);
+  } else setTimeout(() => ChatLib.say(bypassedMessage), 250);
 }).setCriteria('We blocked your comment "${message}" because it ${*}. https://www.hypixel.net/rules/'), () => config.toggle);
 
 register("command", () => config.openGUI()).setName("chatfilterbypass").setAliases(["cfb", "bypass"]);
